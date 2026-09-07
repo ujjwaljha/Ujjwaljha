@@ -282,7 +282,6 @@ main {
 .timeline__when,
 .now-strip span,
 .contact-links span,
-.form-status,
 .site-footer__clock,
 .feature__caption {
   font-family: var(--font-mono);
