@@ -12,8 +12,12 @@ Open `index.html` in a browser, or serve the folder:
 python3 -m http.server 4173
 ```
 
-Then visit `http://localhost:4173`.
+Then visit `http://localhost:4173`. Resume: `http://localhost:4173/resume.html`.
 
 ## Publish
 
-In the GitHub repository settings, enable Pages from the `main` branch root. The site is static HTML, CSS, and JavaScript — no build step.
+1. Merge to `main`.
+2. In the GitHub repository, open **Settings → Pages**.
+3. Set the source to **GitHub Actions**.
+
+The workflow in `.github/workflows/pages.yml` deploys the static site on each push to `main`.

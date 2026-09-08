@@ -16,16 +16,23 @@
     if (!toggle || !mobileNav) return;
     mobileNav.hidden = true;
     toggle.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("is-nav-open");
   };
 
   toggle?.addEventListener("click", () => {
     const open = mobileNav.hidden;
     mobileNav.hidden = !open;
     toggle.setAttribute("aria-expanded", String(open));
+    document.body.classList.toggle("is-nav-open", open);
+    if (open) mobileNav.querySelector("a")?.focus();
   });
 
   mobileNav?.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", closeMenu);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeMenu();
   });
 
   const sections = [...document.querySelectorAll("[data-section]")];
@@ -95,10 +102,25 @@
     }
 
     status.classList.remove("is-error");
+    const subject = `Portfolio note from ${name}`;
+    const composed = `${message}\n\n— ${name}\n${email}`;
     status.textContent = "Opening your email client…";
-    const subject = encodeURIComponent(`Portfolio note from ${name}`);
-    const body = encodeURIComponent(`${message}\n\n— ${name}\n${email}`);
-    window.location.href = `mailto:ujjwal002@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:ujjwal002@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(composed)}`;
+  });
+
+  const copyEmail = document.querySelector("[data-copy-email]");
+  copyEmail?.addEventListener("click", async () => {
+    const email = copyEmail.getAttribute("data-email") || "ujjwal002@gmail.com";
+    try {
+      await navigator.clipboard.writeText(email);
+      copyEmail.textContent = "Email copied";
+    } catch {
+      window.location.href = `mailto:${email}`;
+      copyEmail.textContent = "Opened email";
+    }
+    window.setTimeout(() => {
+      copyEmail.textContent = "Copy email";
+    }, 2000);
   });
 
   if (!canvas || reduceMotion) return;
