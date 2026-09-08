@@ -108,19 +108,35 @@
     window.location.href = `mailto:ujjwal002@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(composed)}`;
   });
 
+  const copyText = async (text) => {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    const input = document.createElement("textarea");
+    input.value = text;
+    input.setAttribute("readonly", "");
+    input.style.position = "fixed";
+    input.style.left = "-9999px";
+    document.body.appendChild(input);
+    input.select();
+    const ok = document.execCommand("copy");
+    input.remove();
+    if (!ok) throw new Error("copy failed");
+  };
+
   const copyEmail = document.querySelector("[data-copy-email]");
   copyEmail?.addEventListener("click", async () => {
     const email = copyEmail.getAttribute("data-email") || "ujjwal002@gmail.com";
     try {
-      await navigator.clipboard.writeText(email);
+      await copyText(email);
       copyEmail.textContent = "Email copied";
     } catch {
-      window.location.href = `mailto:${email}`;
-      copyEmail.textContent = "Opened email";
+      copyEmail.textContent = "Copy failed — use the address above";
     }
     window.setTimeout(() => {
       copyEmail.textContent = "Copy email";
-    }, 2000);
+    }, 2200);
   });
 
   if (!canvas || reduceMotion) return;
