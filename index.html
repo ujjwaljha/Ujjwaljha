@@ -632,8 +632,21 @@ app.MapPost("/intents", async (Request text, IntentModel model) =&gt;
     </footer>
     <a class="to-top" href="#top" data-to-top hidden>Top</a>
 
+    <aside class="welcome" data-welcome hidden>
+      <div class="welcome__copy">
+        <p class="welcome__kicker">Optional game</p>
+        <p>A short routing toy is available. The portfolio is already open.</p>
+      </div>
+      <div class="welcome__actions">
+        <button class="btn btn--primary" type="button" data-welcome-skip>Enter portfolio</button>
+        <button class="btn btn--ghost" type="button" data-welcome-play>Play instead</button>
+        <button class="welcome__close" type="button" data-welcome-skip aria-label="Dismiss">Close</button>
+      </div>
+    </aside>
+
     <div class="init" id="init" data-init hidden>
       <canvas class="init__arena" data-arena aria-hidden="true"></canvas>
+      <button class="init__dismiss" type="button" data-init-skip>Enter portfolio</button>
       <div class="init__screen" data-init-intro>
         <p class="init__kicker">Mesh init · client-side game</p>
         <h2>Bring the runtime online</h2>
@@ -643,13 +656,13 @@ app.MapPost("/intents", async (Request text, IntentModel model) =&gt;
           complete init. This is a toy — not a production model.
         </p>
         <ol class="init__how">
-          <li>Move onto a packet, or click it, to pick it up</li>
-          <li>Carry it to License, Health, Pay, Build, or Review</li>
+          <li>Tap a request chip below, or move onto a packet</li>
+          <li>Tap the matching bay chip: License, Health, Pay, Build, or Review</li>
           <li>Wrong bay does not write. A clerk would take it.</li>
         </ol>
         <div class="init__actions">
-          <button class="btn btn--primary" type="button" data-init-play>Start init</button>
-          <button class="btn btn--ghost" type="button" data-init-skip>Skip to portfolio</button>
+          <button class="btn btn--primary" type="button" data-init-skip>Enter portfolio</button>
+          <button class="btn btn--ghost" type="button" data-init-play>Start the game</button>
         </div>
       </div>
       <div class="init__hud" data-init-hud hidden>
@@ -668,7 +681,18 @@ app.MapPost("/intents", async (Request text, IntentModel model) =&gt;
             <dd data-init-lives>3</dd>
           </div>
         </dl>
-        <button class="btn btn--ghost" type="button" data-init-exit>Abort</button>
+        <button class="btn btn--ghost" type="button" data-init-exit>Exit to portfolio</button>
+      </div>
+      <div class="init__easy" data-init-easy hidden>
+        <p class="init__easy-label">Easy route · tap a request, then a bay</p>
+        <div class="init__picks" data-init-packets></div>
+        <div class="init__picks init__picks--bays" data-init-bays>
+          <button type="button" data-bay="license">License</button>
+          <button type="button" data-bay="health">Health</button>
+          <button type="button" data-bay="payment">Pay</button>
+          <button type="button" data-bay="engineering">Build</button>
+          <button type="button" data-bay="review">Review</button>
+        </div>
       </div>
       <div class="init__screen init__screen--end" data-init-end hidden>
         <p class="init__kicker">Mesh init</p>
@@ -676,8 +700,8 @@ app.MapPost("/intents", async (Request text, IntentModel model) =&gt;
         <p data-init-end-copy>Eight routes landed.</p>
         <p class="init__best">Best score <strong data-init-best>0</strong></p>
         <div class="init__actions">
-          <button class="btn btn--primary" type="button" data-init-again>Play again</button>
-          <button class="btn btn--ghost" type="button" data-init-enter>Enter portfolio</button>
+          <button class="btn btn--primary" type="button" data-init-enter>Enter portfolio</button>
+          <button class="btn btn--ghost" type="button" data-init-again>Play again</button>
         </div>
       </div>
     </div>

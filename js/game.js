@@ -20,6 +20,11 @@
   const MAX_LIVES = 3;
   const SEEN_KEY = "uj-mesh-init-seen";
   const BEST_KEY = "uj-mesh-init-best";
+  const WELCOME_KEY = "uj-mesh-init-welcome";
+  const welcome = document.querySelector("[data-welcome]");
+  const packetBox = root.querySelector("[data-init-packets]");
+  const easy = root.querySelector("[data-init-easy]");
+  let packetSeq = 0;
   const KINDS = [
     { id: "license", text: "Renew trade license", bay: "license" },
     { id: "health", text: "Book food inspection", bay: "health" },
@@ -145,6 +150,7 @@
     }
     state.packets.push({
       ...kind,
+      uid: `p${packetSeq += 1}`,
       x,
       y,
       vx,
@@ -152,6 +158,7 @@
       life: 1,
       ttl: 22,
     });
+    paintEasy();
   };
 
   const nearestPacket = (x, y, reach) => {
@@ -167,12 +174,29 @@
     return found;
   };
 
+  const paintEasy = () => {
+    if (!packetBox) return;
+    const rows = state.carry ? [state.carry] : state.packets;
+    packetBox.innerHTML = rows.length
+      ? rows.map((packet) => `
+          <button type="button" class="init__chip${state.carry === packet ? " is-hot" : ""}" data-grab="${packet.uid}">
+            ${packet.text}
+          </button>
+        `).join("")
+      : `<span class="init__wait">Waiting for a request…</span>`;
+    root.querySelectorAll("[data-bay]").forEach((btn) => {
+      btn.classList.toggle("is-ready", Boolean(state.carry));
+      btn.classList.toggle("is-match", Boolean(state.carry && state.carry.bay === btn.getAttribute("data-bay")));
+    });
+  };
+
   const grabPacket = (packet) => {
     if (!packet || state.carry) return;
     state.packets = state.packets.filter((row) => row !== packet);
     state.carry = packet;
     packet.ttl = Math.max(packet.ttl, 10);
     setStatus(`Carrying · ${packet.text}`);
+    paintEasy();
     tone(520, 60, 0.025);
   };
 
@@ -201,6 +225,7 @@
     }
     state.carry = null;
     paintHud();
+    paintEasy();
     if (state.lives <= 0) finish(false);
   };
 
@@ -222,6 +247,7 @@
     }
     state.carry = null;
     paintHud();
+    paintEasy();
     if (state.routed >= GOAL) finish(true);
     else if (state.lives <= 0) finish(false);
   };
@@ -283,6 +309,7 @@
         state.lives -= 1;
         setStatus("Missed a request · citizen still waiting");
         paintHud();
+        paintEasy();
         tone(150, 120, 0.03);
         if (state.lives <= 0) {
           finish(false);
@@ -404,6 +431,7 @@
     intro.hidden = panel !== "intro";
     hud.hidden = panel !== "play";
     ending.hidden = panel !== "end";
+    if (easy) easy.hidden = panel !== "play";
   };
 
   const open = (panel = "intro") => {
@@ -413,11 +441,13 @@
     state.phase = panel === "play" ? "play" : panel;
     show(panel);
     resize();
+    hideWelcome(true);
     if (panel === "intro") {
-      root.querySelector("[data-init-play]")?.focus();
+      root.querySelector("[data-init-skip]")?.focus();
     }
     try {
       window.sessionStorage.setItem(SEEN_KEY, "1");
+      window.localStorage.setItem(WELCOME_KEY, "1");
     } catch {
       /* ignore */
     }
@@ -449,8 +479,9 @@
     state.carry = null;
     state.spawnIn = 2.8;
     paintHud();
-    setStatus("Gateway online · click a request or move onto it");
+    setStatus("Gateway online · tap a request chip, or move onto it");
     spawnPacket(KINDS[0]);
+    paintEasy();
   };
 
   const play = () => {
@@ -477,7 +508,7 @@
         ? `Eight routes landed. Score ${state.score}. Same rule as the lab: low confidence still goes to a clerk.`
         : `The write path stayed closed. Score ${state.score}. Replay, or enter the portfolio.`;
     }
-    ending.querySelector("[data-init-again]")?.focus();
+    ending.querySelector("[data-init-enter]")?.focus();
     tone(won ? 680 : 220, 180, 0.035);
   };
 
@@ -503,11 +534,61 @@
     state.pointer.on = false;
   });
 
+  const dismissedWelcome = () => {
+    try {
+      return window.localStorage.getItem(WELCOME_KEY) === "1";
+    } catch {
+      return false;
+    }
+  };
+
+  const hideWelcome = (persist) => {
+    if (welcome) welcome.hidden = true;
+    if (!persist) return;
+    try {
+      window.localStorage.setItem(WELCOME_KEY, "1");
+      window.sessionStorage.setItem(SEEN_KEY, "1");
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const showWelcome = () => {
+    if (!welcome || dismissedWelcome()) return;
+    welcome.hidden = false;
+  };
+
   document.querySelectorAll("[data-init-open]").forEach((btn) => {
     btn.addEventListener("click", (event) => {
       event.preventDefault();
       open("intro");
     });
+  });
+
+  document.querySelectorAll("[data-welcome-skip]").forEach((btn) => {
+    btn.addEventListener("click", () => hideWelcome(true));
+  });
+  welcome?.querySelector("[data-welcome-play]")?.addEventListener("click", () => {
+    hideWelcome(true);
+    open("intro");
+  });
+
+  packetBox?.addEventListener("click", (event) => {
+    const btn = event.target instanceof Element ? event.target.closest("[data-grab]") : null;
+    if (!btn) return;
+    const packet = [...state.packets, state.carry].find((row) => row && row.uid === btn.getAttribute("data-grab"));
+    if (packet && !state.carry) grabPacket(packet);
+  });
+
+  root.querySelector("[data-init-bays]")?.addEventListener("click", (event) => {
+    const btn = event.target instanceof Element ? event.target.closest("[data-bay]") : null;
+    if (!btn || !state.carry) return;
+    const bay = bays().find((row) => row.id === btn.getAttribute("data-bay"));
+    if (bay) deliver(state.carry, bay);
+  });
+
+  root.addEventListener("click", (event) => {
+    if (state.phase === "intro" && event.target === root) close();
   });
 
   root.querySelector("[data-init-play]")?.addEventListener("click", play);
@@ -517,10 +598,13 @@
   });
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && state.phase !== "closed") {
+    if (event.key !== "Escape") return;
+    if (state.phase !== "closed") {
       event.preventDefault();
       close();
+      return;
     }
+    if (welcome && !welcome.hidden) hideWelcome(true);
   });
 
   window.addEventListener("resize", () => {
@@ -538,12 +622,10 @@
   const hash = window.location.hash;
   const deep = hash === "#init";
   const home = !hash || hash === "#" || hash === "#top";
-  let seen = false;
-  try {
-    seen = window.sessionStorage.getItem(SEEN_KEY) === "1";
-  } catch {
-    seen = false;
-  }
+  window.addEventListener("scroll", () => {
+    if (welcome && !welcome.hidden && window.scrollY > 70) hideWelcome(true);
+  }, { passive: true });
+
   if (deep) open("intro");
-  else if (home && !seen && !reduceMotion) open("intro");
+  else if (home) showWelcome();
 })();

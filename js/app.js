@@ -319,7 +319,7 @@
   const isHotTarget = (node) => {
     if (!(node instanceof Element)) return false;
     if (node.closest("input, textarea, select")) return false;
-    return Boolean(node.closest("a, button, .btn, [data-sample], [data-copy-email], [data-init-open], .nav-toggle"));
+    return Boolean(node.closest("a, button, .btn, [data-sample], [data-copy-email], [data-init-open], [data-welcome-skip], [data-welcome-play], .nav-toggle"));
   };
 
   if (!reduceMotion) {
