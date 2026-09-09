@@ -317,7 +317,7 @@
   const isHotTarget = (node) => {
     if (!(node instanceof Element)) return false;
     if (node.closest("input, textarea, select")) return false;
-    return Boolean(node.closest("a, button, .btn, [data-sample], [data-copy-email], .nav-toggle"));
+    return Boolean(node.closest("a, button, .btn, [data-sample], [data-copy-email], [data-init-open], .nav-toggle"));
   };
 
   if (!reduceMotion) {

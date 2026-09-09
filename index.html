@@ -98,6 +98,7 @@
           <a href="#stack">Stack</a>
           <a href="#transition">Transition</a>
           <a href="#lab">Lab</a>
+          <a href="#init" data-init-open>Init</a>
           <a href="#contact">Contact</a>
           <a href="resume.html">Resume</a>
         </nav>
@@ -114,6 +115,7 @@
         <a href="#stack">Stack</a>
         <a href="#transition">Transition</a>
         <a href="#lab">Lab</a>
+        <a href="#init" data-init-open>Init</a>
         <a href="#contact">Contact</a>
         <a href="resume.html">Resume</a>
       </div>
@@ -152,6 +154,7 @@
           </p>
           <div class="hero__actions">
             <a class="btn btn--primary" href="#work">Selected systems</a>
+            <button class="btn btn--ghost" type="button" data-init-open>Play the init</button>
             <a class="btn btn--ghost" href="#lab">Try the router</a>
           </div>
           <dl class="hero__stats">
@@ -541,6 +544,8 @@
             boundaries I already ship in ASP.NET. In production this would be
             ML.NET or a grounded model behind the API — with a human in the loop
             when confidence is low.
+            You can also <button class="text-link" type="button" data-init-open>play the mesh init</button>
+            and route packets by hand.
           </p>
           <div class="lab__chips" data-lab-chips>
             <button type="button" data-sample="I need to renew my shop trade license before it expires.">Trade license</button>
@@ -627,6 +632,57 @@ app.MapPost("/intents", async (Request text, IntentModel model) =&gt;
     </footer>
     <a class="to-top" href="#top" data-to-top hidden>Top</a>
 
+    <div class="init" id="init" data-init hidden>
+      <canvas class="init__arena" data-arena aria-hidden="true"></canvas>
+      <div class="init__screen" data-init-intro>
+        <p class="init__kicker">Mesh init · client-side game</p>
+        <h2>Bring the runtime online</h2>
+        <p>
+          Catch a citizen request with the gateway and drop it on the matching
+          service. Ambiguous text goes to human review. Eight correct routes
+          complete init. This is a toy — not a production model.
+        </p>
+        <ol class="init__how">
+          <li>Move onto a packet to pick it up</li>
+          <li>Carry it to License, Health, Pay, Build, or Review</li>
+          <li>Wrong bay does not write. A clerk would take it.</li>
+        </ol>
+        <div class="init__actions">
+          <button class="btn btn--primary" type="button" data-init-play>Start init</button>
+          <button class="btn btn--ghost" type="button" data-init-skip>Skip to portfolio</button>
+        </div>
+      </div>
+      <div class="init__hud" data-init-hud hidden>
+        <p class="init__status" data-init-status role="status" aria-live="polite">Init running</p>
+        <dl class="init__meters">
+          <div>
+            <dt>Routed</dt>
+            <dd data-init-routed>0 / 8</dd>
+          </div>
+          <div>
+            <dt>Score</dt>
+            <dd data-init-score>0</dd>
+          </div>
+          <div>
+            <dt>Lives</dt>
+            <dd data-init-lives>3</dd>
+          </div>
+        </dl>
+        <button class="btn btn--ghost" type="button" data-init-exit>Abort</button>
+      </div>
+      <div class="init__screen init__screen--end" data-init-end hidden>
+        <p class="init__kicker">Mesh init</p>
+        <h2 data-init-end-title>Mesh online</h2>
+        <p data-init-end-copy>Eight routes landed.</p>
+        <p class="init__best">Best score <strong data-init-best>0</strong></p>
+        <div class="init__actions">
+          <button class="btn btn--primary" type="button" data-init-again>Play again</button>
+          <button class="btn btn--ghost" type="button" data-init-enter>Enter portfolio</button>
+        </div>
+      </div>
+    </div>
+
     <script src="js/app.js"></script>
+    <script src="js/game.js"></script>
   </body>
 </html>
