@@ -432,12 +432,12 @@
   };
 
   const blendTone = () => {
-    tone.r = lerp(tone.r, targetTone.r, 0.055);
-    tone.g = lerp(tone.g, targetTone.g, 0.055);
-    tone.b = lerp(tone.b, targetTone.b, 0.055);
-    tone.r2 = lerp(tone.r2, targetTone.r2, 0.055);
-    tone.g2 = lerp(tone.g2, targetTone.g2, 0.055);
-    tone.b2 = lerp(tone.b2, targetTone.b2, 0.055);
+    tone.r = lerp(tone.r, targetTone.r, 0.12);
+    tone.g = lerp(tone.g, targetTone.g, 0.12);
+    tone.b = lerp(tone.b, targetTone.b, 0.12);
+    tone.r2 = lerp(tone.r2, targetTone.r2, 0.12);
+    tone.g2 = lerp(tone.g2, targetTone.g2, 0.12);
+    tone.b2 = lerp(tone.b2, targetTone.b2, 0.12);
     document.documentElement.style.setProperty("--spot-a", rgba(tone.r, tone.g, tone.b, 0.22));
     document.documentElement.style.setProperty("--spot-b", rgba(tone.r2, tone.g2, tone.b2, 0.08));
   };
