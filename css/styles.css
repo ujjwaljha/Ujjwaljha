@@ -16,6 +16,10 @@
   --font-sans: "Sora", "Segoe UI", sans-serif;
   --px: 50vw;
   --py: 40vh;
+  --spot-a: rgba(226, 179, 74, 0.2);
+  --spot-b: rgba(110, 231, 183, 0.07);
+  --rx: 0deg;
+  --ry: 0deg;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
   --max: 1120px;
   --pad: clamp(1.25rem, 4vw, 2.5rem);
@@ -30,6 +34,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header) + 0.75rem);
 }
 
 body {
@@ -131,6 +136,11 @@ a:hover {
   width: 100%;
   height: 0;
   background: linear-gradient(var(--amber), var(--mint));
+  transition: background 0.6s ease;
+}
+
+body.is-mint .filament__fill {
+  background: linear-gradient(var(--mint), var(--amber));
 }
 
 .site-header {
@@ -144,6 +154,7 @@ a:hover {
 
 .site-header.is-scrolled {
   border-bottom-color: var(--line);
+  background: rgba(7, 8, 10, 0.86);
 }
 
 .site-header__inner {
@@ -190,6 +201,12 @@ a:hover {
 .mobile-nav a:hover,
 .nav a.is-active {
   color: var(--amber-2);
+}
+
+body.is-mint .nav a.is-active,
+body.is-mint .nav a:hover,
+body.is-mint .rail a.is-active {
+  color: var(--mint);
 }
 
 .header-cta {
@@ -284,7 +301,7 @@ main {
   position: fixed;
   inset: 0;
   z-index: 2;
-  background: radial-gradient(520px circle at var(--px) var(--py), rgba(226, 179, 74, 0.2), rgba(110, 231, 183, 0.07) 32%, transparent 62%);
+  background: radial-gradient(520px circle at var(--px) var(--py), var(--spot-a), var(--spot-b) 32%, transparent 62%);
 }
 
 .cursor {
@@ -305,8 +322,22 @@ main {
   opacity: 1;
 }
 
+.cursor.is-hot .cursor__ring {
+  transform: scale(1.42);
+  border-color: rgba(110, 231, 183, 0.86);
+}
+
+.cursor.is-hot .cursor__core {
+  background: var(--amber);
+  box-shadow: 0 0 22px rgba(226, 179, 74, 0.9);
+}
+
 .cursor.is-down .cursor__ring {
   transform: scale(0.72);
+}
+
+body.is-mint .cursor__ring {
+  border-color: rgba(110, 231, 183, 0.78);
 }
 
 .cursor__ring,
@@ -421,6 +452,36 @@ h3 {
   color: transparent;
   -webkit-text-stroke: 1.4px var(--paper-2);
 }
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hero .eyebrow,
+.hero__given,
+.hero__family,
+.hero__lede,
+.hero .avail,
+.hero__actions,
+.hero__stats {
+  animation: rise-in 0.95s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero .eyebrow { animation-delay: 0.04s; }
+.hero__given { animation-delay: 0.1s; }
+.hero__family { animation-delay: 0.18s; }
+.hero__lede { animation-delay: 0.26s; }
+.hero .avail { animation-delay: 0.34s; }
+.hero__actions { animation-delay: 0.42s; }
+.hero__stats { animation-delay: 0.52s; }
 
 .hero__lede {
   max-width: 36rem;
@@ -701,6 +762,7 @@ h3 {
   display: grid;
   gap: 0.35rem;
   margin-bottom: 1rem;
+  animation: rise-in 0.45s ease both;
 }
 
 .lab__result strong {
@@ -753,6 +815,7 @@ h3 {
   height: 100%;
   width: 0;
   background: linear-gradient(90deg, var(--amber), var(--mint));
+  transition: width 0.75s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .lab__code {
@@ -986,16 +1049,26 @@ h3 {
 .case:hover,
 .stack-card:hover,
 .path li:hover,
-.lab:hover {
+.lab:hover,
+.feature:hover {
   border-color: var(--line-strong);
-  transform: translateY(-2px);
 }
 
 .case,
 .stack-card,
 .path li,
-.lab {
-  transition: border-color 0.2s ease, transform 0.2s ease;
+.lab,
+.feature {
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-tilt] {
+  transform: perspective(920px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(var(--lift, 0px));
+  transform-style: preserve-3d;
+}
+
+[data-tilt]:hover {
+  --lift: -3px;
 }
 
 .timeline {
@@ -1212,9 +1285,24 @@ h3 {
   .case,
   .stack-card,
   .path li,
-  .lab {
+  .lab,
+  .feature,
+  [data-tilt],
+  .hero .eyebrow,
+  .hero__given,
+  .hero__family,
+  .hero__lede,
+  .hero .avail,
+  .hero__actions,
+  .hero__stats,
+  .lab__result {
     opacity: 1;
     transform: none;
+    animation: none;
+    transition: none;
+  }
+
+  .bar > span {
     transition: none;
   }
 }
