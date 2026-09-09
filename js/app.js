@@ -267,10 +267,10 @@
   const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   const cursor = document.querySelector("[data-cursor]");
   const pointer = {
-    x: window.innerWidth * 0.6,
-    y: window.innerHeight * 0.35,
-    tx: window.innerWidth * 0.6,
-    ty: window.innerHeight * 0.35,
+    x: window.innerWidth * 0.5,
+    y: window.innerHeight * 0.4,
+    tx: window.innerWidth * 0.5,
+    ty: window.innerHeight * 0.4,
     active: false,
   };
   const sparks = [];
@@ -283,29 +283,25 @@
     document.documentElement.style.setProperty("--py", `${y}px`);
   };
 
-  if (finePointer && !reduceMotion) {
-    document.body.classList.add("has-cursor");
+  if (!reduceMotion) {
+    if (finePointer) document.body.classList.add("has-cursor");
     window.addEventListener("pointermove", (event) => {
       setPointer(event.clientX, event.clientY);
       cursor?.classList.add("is-on");
-      if (Math.random() > 0.62) {
+      if (Math.random() > 0.55) {
         sparks.push({
           x: event.clientX,
           y: event.clientY,
-          vx: (Math.random() - 0.5) * 1.4,
-          vy: (Math.random() - 0.5) * 1.4,
+          vx: (Math.random() - 0.5) * 1.6,
+          vy: (Math.random() - 0.5) * 1.6,
           life: 1,
           mint: Math.random() > 0.55,
         });
-        if (sparks.length > 70) sparks.shift();
+        if (sparks.length > 90) sparks.shift();
       }
     }, { passive: true });
     window.addEventListener("pointerdown", () => cursor?.classList.add("is-down"));
     window.addEventListener("pointerup", () => cursor?.classList.remove("is-down"));
-    document.addEventListener("pointerleave", () => {
-      pointer.active = false;
-      cursor?.classList.remove("is-on");
-    });
 
     document.querySelectorAll(".btn").forEach((btn) => {
       btn.addEventListener("pointermove", (event) => {
@@ -322,37 +318,40 @@
 
   if (!canvas || reduceMotion) return;
 
-  const ctx = canvas.getContext("2d");
+  const ctx = canvas.getContext("2d", { alpha: true });
   const nodes = [];
-  const count = 58;
+  const count = 72;
   let raf = 0;
+  let viewW = window.innerWidth;
+  let viewH = window.innerHeight;
 
   const resize = () => {
-    canvas.width = Math.floor(window.innerWidth * window.devicePixelRatio);
-    canvas.height = Math.floor(window.innerHeight * window.devicePixelRatio);
-    ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+    viewW = window.innerWidth;
+    viewH = window.innerHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.style.width = `${viewW}px`;
+    canvas.style.height = `${viewH}px`;
+    canvas.width = Math.max(1, Math.floor(viewW * dpr));
+    canvas.height = Math.max(1, Math.floor(viewH * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   };
 
   const seed = () => {
     nodes.length = 0;
-    const viewW = window.innerWidth;
-    const viewH = window.innerHeight;
     for (let i = 0; i < count; i += 1) {
       nodes.push({
         x: Math.random() * viewW,
         y: Math.random() * viewH,
-        vx: (Math.random() - 0.5) * 0.22,
-        vy: (Math.random() - 0.5) * 0.22,
-        r: Math.random() * 1.8 + 0.7,
+        vx: (Math.random() - 0.5) * 0.28,
+        vy: (Math.random() - 0.5) * 0.28,
+        r: Math.random() * 2.1 + 1,
         mint: i % 4 === 0,
       });
     }
   };
 
   const step = () => {
-    const viewW = window.innerWidth;
-    const viewH = window.innerHeight;
-    pointer.x += (pointer.tx - pointer.x) * 0.13;
+    pointer.x += (pointer.tx - pointer.x) * 0.16;
     pointer.y += (pointer.ty - pointer.y) * 0.13;
     if (cursor) {
       cursor.style.transform = `translate(${pointer.x}px, ${pointer.y}px)`;

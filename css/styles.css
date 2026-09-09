@@ -261,27 +261,29 @@ main {
 
 .hero {
   position: relative;
-  isolation: isolate;
   min-height: calc(100vh - var(--header));
   display: grid;
   align-items: end;
   padding: clamp(3rem, 8vh, 6rem) var(--pad) 4rem;
 }
 
-.field {
+.stage {
+  display: block;
   position: fixed;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100vw;
+  height: 100vh;
   pointer-events: none;
+  mix-blend-mode: screen;
 }
 
 .spotlight {
   pointer-events: none;
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: 2;
   background: radial-gradient(520px circle at var(--px) var(--py), rgba(226, 179, 74, 0.2), rgba(110, 231, 183, 0.07) 32%, transparent 62%);
 }
 
@@ -1200,7 +1202,7 @@ h3 {
   }
 
   .grain,
-  .field,
+  .stage,
   .spotlight,
   .cursor {
     display: none;
@@ -1221,7 +1223,7 @@ h3 {
   .grain,
   .filament,
   .rail,
-  .field,
+  .stage,
   .spotlight,
   .cursor,
   .site-header,
