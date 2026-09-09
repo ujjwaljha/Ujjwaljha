@@ -35,7 +35,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,560;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/styles.css" />
@@ -78,6 +78,12 @@
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="grain" aria-hidden="true"></div>
+    <div class="spotlight" aria-hidden="true"></div>
+    <canvas class="field" data-field aria-hidden="true"></canvas>
+    <div class="cursor" data-cursor aria-hidden="true">
+      <span class="cursor__ring"></span>
+      <span class="cursor__core"></span>
+    </div>
     <div class="filament" aria-hidden="true"><span class="filament__fill"></span></div>
 
     <header class="site-header" data-header>
@@ -91,6 +97,7 @@
           <a href="#experience">Experience</a>
           <a href="#stack">Stack</a>
           <a href="#transition">Transition</a>
+          <a href="#lab">Lab</a>
           <a href="#contact">Contact</a>
           <a href="resume.html">Resume</a>
         </nav>
@@ -106,6 +113,7 @@
         <a href="#experience">Experience</a>
         <a href="#stack">Stack</a>
         <a href="#transition">Transition</a>
+        <a href="#lab">Lab</a>
         <a href="#contact">Contact</a>
         <a href="resume.html">Resume</a>
       </div>
@@ -122,7 +130,6 @@
 
     <main id="main">
       <section class="hero" id="top">
-        <canvas class="hero__canvas" data-field aria-hidden="true"></canvas>
         <div class="hero__grid">
           <p class="eyebrow">
             <span class="dot dot--amber"></span>
@@ -139,9 +146,13 @@
             Thirteen years shipping C# systems for government and media.
             Now taking that production discipline into machine learning.
           </p>
+          <p class="avail">
+            <span class="dot dot--mint"></span>
+            Open to applied AI collaborations
+          </p>
           <div class="hero__actions">
             <a class="btn btn--primary" href="#work">Selected systems</a>
-            <a class="btn btn--ghost" href="#transition">The AI pivot</a>
+            <a class="btn btn--ghost" href="#lab">Try the router</a>
           </div>
           <dl class="hero__stats">
             <div>
@@ -160,7 +171,7 @@
         </div>
       </section>
 
-      <section class="section about" id="about" data-section="about">
+      <section class="section about reveal" id="about" data-section="about">
         <div class="section__meta">
           <span class="index">01</span>
           <h2>The long runtime</h2>
@@ -209,7 +220,7 @@
         </div>
       </section>
 
-      <section class="section work" id="work" data-section="work">
+      <section class="section work reveal" id="work" data-section="work">
         <div class="section__meta">
           <span class="index">02</span>
           <h2>Selected systems</h2>
@@ -349,7 +360,7 @@
         </div>
       </section>
 
-      <section class="section experience" id="experience" data-section="experience">
+      <section class="section experience reveal" id="experience" data-section="experience">
         <div class="section__meta">
           <span class="index">03</span>
           <h2>Experience</h2>
@@ -414,7 +425,7 @@
         </ol>
       </section>
 
-      <section class="section stack" id="stack" data-section="stack">
+      <section class="section stack reveal" id="stack" data-section="stack">
         <div class="section__meta">
           <span class="index">04</span>
           <h2>Two stacks, one engineer</h2>
@@ -464,7 +475,7 @@
         </div>
       </section>
 
-      <section class="section transition" id="transition" data-section="transition">
+      <section class="section transition reveal" id="transition" data-section="transition">
         <div class="section__meta">
           <span class="index">05</span>
           <h2>Why AI, and why now</h2>
@@ -521,9 +532,40 @@
             </li>
           </ol>
         </div>
+
+        <article class="lab" id="lab">
+          <p class="lab__kicker">Applied AI lab · client-side demo</p>
+          <h3>Route a citizen request</h3>
+          <p>
+            A transparent keyword model that maps free text to the same service
+            boundaries I already ship in ASP.NET. In production this would be
+            ML.NET or a grounded model behind the API — with a human in the loop
+            when confidence is low.
+          </p>
+          <div class="lab__chips" data-lab-chips>
+            <button type="button" data-sample="I need to renew my shop trade license before it expires.">Trade license</button>
+            <button type="button" data-sample="When is the health inspection for my restaurant?">Food inspection</button>
+            <button type="button" data-sample="I want to pay the municipality fee and download the receipt.">Pay a fee</button>
+            <button type="button" data-sample="We need a building permit for a villa extension.">Building permit</button>
+          </div>
+          <form class="lab__form" data-lab-form>
+            <label for="lab-query">Citizen request</label>
+            <textarea id="lab-query" name="query" rows="3" placeholder="Describe a municipal request…" required></textarea>
+            <button class="btn btn--primary" type="submit">Classify</button>
+          </form>
+          <div class="lab__out" data-lab-out hidden></div>
+          <pre class="lab__code" tabindex="0"><code>// Same idea, hosted next to the service I already operate
+app.MapPost("/intents", async (Request text, IntentModel model) =&gt;
+{
+    var scored = model.Predict(text);
+    return scored.Confidence &lt; 0.55
+        ? Results.Json(new { route = "human-review", scored })
+        : Results.Json(new { route = scored.Service, scored });
+});</code></pre>
+        </article>
       </section>
 
-      <section class="section contact" id="contact" data-section="contact">
+      <section class="section contact reveal" id="contact" data-section="contact">
         <div class="section__meta">
           <span class="index">06</span>
           <h2>Start a conversation</h2>
@@ -583,6 +625,7 @@
         <time data-uae-clock datetime=""></time>
       </p>
     </footer>
+    <a class="to-top" href="#top" data-to-top hidden>Top</a>
 
     <script src="js/app.js"></script>
   </body>
