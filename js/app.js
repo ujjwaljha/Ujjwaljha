@@ -73,6 +73,8 @@
       filament.style.height = `${max > 0 ? (y / max) * 100 : 0}%`;
     }
 
+    if (document.body.classList.contains("is-init-open")) return;
+
     let current = y < 90 ? "top" : sections[0]?.id;
     for (const section of sections) {
       if (section.getBoundingClientRect().top <= 140) current = section.id;
