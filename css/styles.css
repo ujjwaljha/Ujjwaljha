@@ -357,6 +357,18 @@ h3 {
   font-weight: 300;
 }
 
+.avail {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.35rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mint);
+}
+
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
@@ -536,11 +548,182 @@ h3 {
   color: var(--paper-2);
 }
 
+.lab {
+  margin-top: 2rem;
+  padding: 1.5rem 1.4rem 1.6rem;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, rgba(110, 231, 183, 0.06), transparent 36%),
+    var(--bg-2);
+}
+
+.lab h3 {
+  margin: 0.2rem 0 0.7rem;
+}
+
+.lab > p {
+  color: var(--paper-2);
+  max-width: 46rem;
+}
+
+.lab__kicker {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mint);
+}
+
+.lab__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1.1rem 0 1rem;
+}
+
+.lab__chips button {
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--paper-2);
+  font: 500 0.85rem var(--font-sans);
+  cursor: pointer;
+}
+
+.lab__chips button:hover,
+.lab__chips button.is-active {
+  border-color: var(--mint);
+  color: var(--mint);
+}
+
+.lab__form label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.88rem;
+}
+
+.lab__form textarea {
+  width: 100%;
+  margin-bottom: 0.85rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: #0a0c10;
+  color: var(--paper);
+  font: inherit;
+}
+
+.lab__out {
+  margin-top: 1.2rem;
+}
+
+.lab__result {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.lab__result strong {
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 400;
+}
+
+.lab__meta {
+  color: var(--paper-2);
+  font-size: 0.95rem;
+}
+
+.lab__warn {
+  color: var(--amber-2);
+}
+
+.scores {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scores li {
+  display: grid;
+  grid-template-columns: 11rem 1fr 3rem;
+  gap: 0.6rem;
+  align-items: center;
+  font-size: 0.88rem;
+  color: var(--paper-2);
+}
+
+.scores b {
+  justify-self: end;
+  font-weight: 500;
+  color: var(--paper);
+}
+
+.bar {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(243, 234, 215, 0.08);
+}
+
+.bar > span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--amber), var(--mint));
+}
+
+.lab__code {
+  overflow-x: auto;
+  margin: 1.2rem 0 0;
+  padding: 1rem 1.05rem;
+  border: 1px dashed var(--line-strong);
+  background: #0a0c10;
+  color: var(--paper-2);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
 .contact-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.7rem;
   margin-top: 1.3rem;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.to-top {
+  position: fixed;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  z-index: 9;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: rgba(7, 8, 10, 0.86);
+  color: var(--paper);
+  text-decoration: none;
+  font-size: 0.82rem;
+}
+
+.to-top:hover {
+  border-color: var(--amber);
+  color: var(--amber-2);
 }
 
 .resume {
@@ -723,8 +906,18 @@ h3 {
 }
 
 .case:hover,
-.stack-card:hover {
+.stack-card:hover,
+.path li:hover,
+.lab:hover {
   border-color: var(--line-strong);
+  transform: translateY(-2px);
+}
+
+.case,
+.stack-card,
+.path li,
+.lab {
+  transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
 .timeline {
@@ -891,7 +1084,8 @@ h3 {
   .now-strip,
   .timeline li,
   .path,
-  .resume__split {
+  .resume__split,
+  .scores li {
     grid-template-columns: 1fr;
   }
 
@@ -932,6 +1126,16 @@ h3 {
   .grain,
   .hero__canvas {
     display: none;
+  }
+
+  .reveal,
+  .case,
+  .stack-card,
+  .path li,
+  .lab {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 

@@ -139,6 +139,131 @@
     }, 2200);
   });
 
+  const toTop = document.querySelector("[data-to-top]");
+  const syncToTop = () => {
+    if (!toTop) return;
+    toTop.hidden = window.scrollY < 700;
+  };
+  window.addEventListener("scroll", syncToTop, { passive: true });
+  syncToTop();
+
+  if (!reduceMotion) {
+    const revealer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          revealer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+    document.querySelectorAll(".reveal").forEach((node) => revealer.observe(node));
+  } else {
+    document.querySelectorAll(".reveal").forEach((node) => node.classList.add("is-visible"));
+  }
+
+  const routes = [
+    {
+      id: "license",
+      label: "Trade license",
+      service: "eService · Licensing",
+      next: "DED validation + document generation",
+      terms: ["license", "licence", "trade", "shop", "company", "commercial", "renew", "ded", "business", "permit"],
+    },
+    {
+      id: "health",
+      label: "Public health",
+      service: "eService · Public Health",
+      next: "Inspection schedule · Central Lab",
+      terms: ["health", "food", "restaurant", "inspection", "hygiene", "cafe", "kitchen", "lab"],
+    },
+    {
+      id: "engineering",
+      label: "Engineering",
+      service: "eService · Engineering",
+      next: "Drawings review · Work Management",
+      terms: ["building", "villa", "construction", "drawing", "extension", "engineer", "permit", "site"],
+    },
+    {
+      id: "payment",
+      label: "Payments",
+      service: "Payment",
+      next: "Receipt + ClosedXML / IronPdf",
+      terms: ["pay", "fee", "fine", "invoice", "receipt", "payment", "amount"],
+    },
+    {
+      id: "environment",
+      label: "Environment",
+      service: "eService · Environment",
+      next: "Work order · field inspection",
+      terms: ["waste", "dump", "sewage", "garbage", "environment", "pollution"],
+    },
+  ];
+
+  const tokenize = (text) => text.toLowerCase().match(/[a-z0-9]+/g) || [];
+
+  const classify = (text) => {
+    const tokens = tokenize(text);
+    const raw = routes.map((route) => {
+      const hits = route.terms.filter((term) => tokens.includes(term) || text.toLowerCase().includes(term));
+      return { ...route, score: hits.length, hits };
+    });
+    const total = raw.reduce((sum, row) => sum + row.score, 0);
+    const ranked = raw
+      .map((row) => ({ ...row, pct: total ? Math.round((row.score / total) * 100) : 0 }))
+      .sort((a, b) => b.score - a.score);
+    return { ranked, total };
+  };
+
+  const labForm = document.querySelector("[data-lab-form]");
+  const labOut = document.querySelector("[data-lab-out]");
+  const query = document.querySelector("#lab-query");
+
+  const renderLab = (text) => {
+    if (!labOut) return;
+    const { ranked, total } = classify(text);
+    const top = ranked[0];
+    const low = total === 0 || top.pct < 55;
+    labOut.hidden = false;
+    labOut.innerHTML = `
+      <div class="lab__result">
+        <span class="lab__kicker">${low ? "Needs review" : "Suggested route"}</span>
+        <strong>${low ? "Human in the loop" : top.label}</strong>
+        <p class="lab__meta">${low
+          ? "Confidence is too low to auto-route. A clerk should pick the service."
+          : `${top.service} → ${top.next}`}</p>
+        ${low ? '<p class="lab__warn">Production default: do not call the write API yet.</p>' : ""}
+      </div>
+      <ul class="scores">
+        ${ranked.map((row) => `
+          <li>
+            <span>${row.label}</span>
+            <span class="bar" aria-hidden="true"><span style="width:${row.pct}%"></span></span>
+            <b>${row.pct}%</b>
+          </li>
+        `).join("")}
+      </ul>
+    `;
+  };
+
+  labForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const text = String(query?.value || "").trim();
+    if (!text) {
+      query?.focus();
+      return;
+    }
+    renderLab(text);
+  });
+
+  document.querySelectorAll("[data-sample]").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll("[data-sample]").forEach((node) => node.classList.remove("is-active"));
+      chip.classList.add("is-active");
+      if (query) query.value = chip.getAttribute("data-sample") || "";
+      renderLab(query.value);
+    });
+  });
+
   if (!canvas || reduceMotion) return;
 
   const field = canvas.parentElement;
