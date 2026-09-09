@@ -264,6 +264,9 @@
     if (hot && !state.carry) {
       hot.x += (state.pointer.x - hot.x) * 0.08;
       hot.y += (state.pointer.y - hot.y) * 0.08;
+      if (Math.hypot(state.pointer.x - hot.x, state.pointer.y - hot.y) < grab * 0.7) {
+        grabPacket(hot);
+      }
     }
 
     for (let i = state.packets.length - 1; i >= 0; i -= 1) {
