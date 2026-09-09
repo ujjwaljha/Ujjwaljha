@@ -883,65 +883,19 @@ h3 {
   color: var(--mint);
 }
 
-.welcome {
-  position: fixed;
-  left: var(--pad);
-  right: var(--pad);
-  bottom: 1.15rem;
-  z-index: 15;
+.hero__hint {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.85rem 1rem;
-  max-width: 42rem;
-  margin: 0 auto;
-  padding: 0.95rem 1.05rem;
-  border: 1px solid var(--line-strong);
-  background: rgba(14, 16, 20, 0.94);
-  box-shadow: var(--shadow);
-}
-
-.welcome[hidden] {
-  display: none !important;
-}
-
-.welcome__kicker {
-  margin: 0 0 0.2rem;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--mint);
-}
-
-.welcome__copy p:last-child {
-  margin: 0;
-  color: var(--paper-2);
-  font-size: 0.95rem;
-}
-
-.welcome__actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.welcome__close {
-  border: 0;
-  background: none;
+  gap: 0.45rem 0.6rem;
+  max-width: 36rem;
+  margin: 1.1rem 0 0;
   color: var(--muted);
-  font: 500 0.85rem var(--font-sans);
-  cursor: pointer;
+  font-size: 0.92rem;
 }
 
-.welcome__close:hover {
-  color: var(--paper);
-}
-
-body:has(.welcome:not([hidden])) .to-top {
-  display: none;
+.hero__hint[hidden] {
+  display: none !important;
 }
 
 .init {
@@ -1538,10 +1492,6 @@ body.is-init-open .filament {
 }
 
 @media (max-width: 640px) {
-  .welcome {
-    bottom: 4.4rem;
-  }
-
   .init__dismiss {
     top: 0.65rem;
     right: 0.75rem;

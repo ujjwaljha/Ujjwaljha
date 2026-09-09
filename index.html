@@ -154,9 +154,15 @@
           </p>
           <div class="hero__actions">
             <a class="btn btn--primary" href="#work">Selected systems</a>
-            <button class="btn btn--ghost" type="button" data-init-open>Play the init</button>
             <a class="btn btn--ghost" href="#lab">Try the router</a>
+            <button class="btn btn--ghost" type="button" data-init-open>Play the init</button>
           </div>
+          <p class="hero__hint" data-welcome hidden>
+            <span>The site is already open. The routing game is optional.</span>
+            <button class="text-link" type="button" data-welcome-play>Play it</button>
+            <span class="sep">/</span>
+            <button class="text-link" type="button" data-welcome-skip>Hide this note</button>
+          </p>
           <dl class="hero__stats">
             <div>
               <dt>In production</dt>
@@ -631,18 +637,6 @@ app.MapPost("/intents", async (Request text, IntentModel model) =&gt;
       </p>
     </footer>
     <a class="to-top" href="#top" data-to-top hidden>Top</a>
-
-    <aside class="welcome" data-welcome hidden>
-      <div class="welcome__copy">
-        <p class="welcome__kicker">Optional game</p>
-        <p>A short routing toy is available. The portfolio is already open.</p>
-      </div>
-      <div class="welcome__actions">
-        <button class="btn btn--primary" type="button" data-welcome-skip>Enter portfolio</button>
-        <button class="btn btn--ghost" type="button" data-welcome-play>Play instead</button>
-        <button class="welcome__close" type="button" data-welcome-skip aria-label="Dismiss">Close</button>
-      </div>
-    </aside>
 
     <div class="init" id="init" data-init hidden>
       <canvas class="init__arena" data-arena aria-hidden="true"></canvas>

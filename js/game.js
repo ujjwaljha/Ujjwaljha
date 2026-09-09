@@ -621,11 +621,6 @@
 
   const hash = window.location.hash;
   const deep = hash === "#init";
-  const home = !hash || hash === "#" || hash === "#top";
-  window.addEventListener("scroll", () => {
-    if (welcome && !welcome.hidden && window.scrollY > 70) hideWelcome(true);
-  }, { passive: true });
-
   if (deep) open("intro");
-  else if (home) showWelcome();
+  else showWelcome();
 })();
