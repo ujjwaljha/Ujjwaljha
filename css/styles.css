@@ -282,7 +282,7 @@ main {
   position: fixed;
   inset: 0;
   z-index: 0;
-  background: radial-gradient(420px circle at var(--px) var(--py), rgba(226, 179, 74, 0.14), rgba(110, 231, 183, 0.05) 28%, transparent 58%);
+  background: radial-gradient(520px circle at var(--px) var(--py), rgba(226, 179, 74, 0.2), rgba(110, 231, 183, 0.07) 32%, transparent 62%);
 }
 
 .cursor {
@@ -291,9 +291,9 @@ main {
   top: 0;
   left: 0;
   z-index: 20;
-  width: 42px;
-  height: 42px;
-  margin: -21px 0 0 -21px;
+  width: 52px;
+  height: 52px;
+  margin: -26px 0 0 -26px;
   opacity: 0;
   mix-blend-mode: screen;
   transition: opacity 0.25s ease;
@@ -320,9 +320,9 @@ main {
 }
 
 .cursor__core {
-  inset: 17px;
+  inset: 21px;
   background: #6ee7b7;
-  box-shadow: 0 0 18px rgba(110, 231, 183, 0.8);
+  box-shadow: 0 0 22px rgba(110, 231, 183, 0.95);
 }
 
 @media (hover: hover) and (pointer: fine) {

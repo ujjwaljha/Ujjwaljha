@@ -365,8 +365,8 @@
         const dx = pointer.x - node.x;
         const dy = pointer.y - node.y;
         const dist = Math.hypot(dx, dy) || 1;
-        if (dist < 240) {
-          const pull = (1 - dist / 240) * 0.055;
+        if (dist < 280) {
+          const pull = (1 - dist / 280) * 0.08;
           node.vx += (dx / dist) * pull;
           node.vy += (dy / dist) * pull;
           node.vx += (-dy / dist) * 0.012;
@@ -386,11 +386,11 @@
     if (pointer.active) {
       for (const node of nodes) {
         const dist = Math.hypot(pointer.x - node.x, pointer.y - node.y);
-        if (dist < 210) {
+        if (dist < 240) {
           ctx.beginPath();
           ctx.strokeStyle = node.mint
-            ? `rgba(110, 231, 183, ${0.28 - dist / 900})`
-            : `rgba(226, 179, 74, ${0.26 - dist / 900})`;
+            ? `rgba(110, 231, 183, ${0.42 - dist / 800})`
+            : `rgba(226, 179, 74, ${0.4 - dist / 800})`;
           ctx.lineWidth = 1;
           ctx.moveTo(pointer.x, pointer.y);
           ctx.lineTo(node.x, node.y);
