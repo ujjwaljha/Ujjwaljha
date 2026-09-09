@@ -108,33 +108,40 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   };
 
-  const spawnPacket = () => {
+  const grabReach = () => (coarse ? 88 : 72);
+  const dropReach = () => (coarse ? 70 : 58);
+
+  const spawnPacket = (forced) => {
     if (state.packets.length >= 4) return;
     const reviews = KINDS.filter((row) => row.bay === "review");
-    const kind = Math.random() > 0.78
+    const kind = forced || (Math.random() > 0.78
       ? reviews[Math.floor(Math.random() * reviews.length)]
-      : KINDS[Math.floor(Math.random() * 4)];
+      : KINDS[Math.floor(Math.random() * 4)]);
     const side = Math.floor(Math.random() * 4);
-    let x = state.w * 0.5;
-    let y = state.h * 0.5;
-    let vx = (Math.random() - 0.5) * 0.7;
-    let vy = (Math.random() - 0.5) * 0.7;
-    if (side === 0) {
-      x = -30;
-      y = 140 + Math.random() * (state.h - 220);
-      vx = 0.7 + Math.random() * 0.5;
-    } else if (side === 1) {
-      x = state.w + 30;
-      y = 140 + Math.random() * (state.h - 220);
-      vx = -(0.7 + Math.random() * 0.5);
-    } else if (side === 2) {
-      y = 90;
-      x = 80 + Math.random() * (state.w - 160);
-      vy = 0.55 + Math.random() * 0.4;
-    } else {
-      y = state.h + 20;
-      x = 80 + Math.random() * (state.w - 160);
-      vy = -(0.55 + Math.random() * 0.4);
+    let x = state.w * 0.42;
+    let y = state.h * 0.46;
+    let vx = -0.18;
+    let vy = -0.12;
+    if (!forced) {
+      vx = (Math.random() - 0.5) * 0.35;
+      vy = (Math.random() - 0.5) * 0.35;
+      if (side === 0) {
+        x = 24;
+        y = 160 + Math.random() * (state.h - 260);
+        vx = 0.28 + Math.random() * 0.2;
+      } else if (side === 1) {
+        x = state.w - 24;
+        y = 160 + Math.random() * (state.h - 260);
+        vx = -(0.28 + Math.random() * 0.2);
+      } else if (side === 2) {
+        y = 130;
+        x = 120 + Math.random() * (state.w - 240);
+        vy = 0.24 + Math.random() * 0.16;
+      } else {
+        y = state.h - 40;
+        x = 120 + Math.random() * (state.w - 240);
+        vy = -(0.24 + Math.random() * 0.16);
+      }
     }
     state.packets.push({
       ...kind,
@@ -143,8 +150,30 @@
       vx,
       vy,
       life: 1,
-      ttl: 14,
+      ttl: 22,
     });
+  };
+
+  const nearestPacket = (x, y, reach) => {
+    let found = null;
+    let best = reach;
+    for (const packet of state.packets) {
+      const dist = Math.hypot(packet.x - x, packet.y - y);
+      if (dist < best) {
+        best = dist;
+        found = packet;
+      }
+    }
+    return found;
+  };
+
+  const grabPacket = (packet) => {
+    if (!packet || state.carry) return;
+    state.packets = state.packets.filter((row) => row !== packet);
+    state.carry = packet;
+    packet.ttl = Math.max(packet.ttl, 10);
+    setStatus(`Carrying · ${packet.text}`);
+    tone(520, 60, 0.025);
   };
 
   const burst = (x, y, color, n = 12) => {
@@ -212,18 +241,18 @@
 
   const step = () => {
     if (state.phase !== "play" || !ctx) return;
-    const grab = coarse ? 48 : 36;
-    const drop = coarse ? 58 : 46;
+    const grab = grabReach();
+    const drop = dropReach();
 
     state.spawnIn -= 1 / 60;
     if (state.spawnIn <= 0) {
       spawnPacket();
-      state.spawnIn = state.routed > 4 ? 1.35 : 1.85;
+      state.spawnIn = state.routed > 4 ? 2.1 : 2.6;
     }
 
     if (state.carry) {
-      state.carry.x += (state.pointer.x - state.carry.x) * 0.28;
-      state.carry.y += (state.pointer.y - 28 - state.carry.y) * 0.28;
+      state.carry.x += (state.pointer.x - state.carry.x) * 0.32;
+      state.carry.y += (state.pointer.y - 28 - state.carry.y) * 0.32;
       state.carry.ttl -= 1 / 60;
       const bay = nearestBay(state.carry.x, state.carry.y, drop);
       if (bay) deliver(state.carry, bay);
@@ -231,12 +260,22 @@
       if (state.phase !== "play") return;
     }
 
+    const hot = state.pointer.on ? nearestPacket(state.pointer.x, state.pointer.y, grab) : null;
+    if (hot && !state.carry) {
+      hot.x += (state.pointer.x - hot.x) * 0.08;
+      hot.y += (state.pointer.y - hot.y) * 0.08;
+    }
+
     for (let i = state.packets.length - 1; i >= 0; i -= 1) {
       const packet = state.packets[i];
       packet.x += packet.vx;
       packet.y += packet.vy;
       packet.ttl -= 1 / 60;
-      if (packet.x < -80 || packet.x > state.w + 80 || packet.y < -80 || packet.y > state.h + 80 || packet.ttl <= 0) {
+      if (packet.x < -40) packet.x = state.w - 40;
+      if (packet.x > state.w + 40) packet.x = 40;
+      if (packet.y < 110) packet.vy = Math.abs(packet.vy);
+      if (packet.y > state.h - 24) packet.vy = -Math.abs(packet.vy);
+      if (packet.ttl <= 0) {
         state.packets.splice(i, 1);
         state.lives -= 1;
         setStatus("Missed a request · citizen still waiting");
@@ -246,13 +285,6 @@
           finish(false);
           return;
         }
-        continue;
-      }
-      if (!state.carry && state.pointer.on && Math.hypot(state.pointer.x - packet.x, state.pointer.y - packet.y) < grab) {
-        state.carry = packet;
-        state.packets.splice(i, 1);
-        setStatus(`Carrying · ${packet.text}`);
-        tone(520, 60, 0.025);
       }
     }
 
@@ -329,7 +361,19 @@
       drawPacket(state.carry, true);
     }
 
-    for (const packet of state.packets) drawPacket(packet, false);
+    const hover = state.pointer.on && !state.carry
+      ? nearestPacket(state.pointer.x, state.pointer.y, grabReach())
+      : null;
+    for (const packet of state.packets) {
+      if (packet === hover) {
+        ctx.beginPath();
+        ctx.strokeStyle = "rgba(110, 231, 183, 0.7)";
+        ctx.lineWidth = 1.2;
+        ctx.arc(packet.x, packet.y, 34, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      drawPacket(packet, packet === hover);
+    }
 
     for (const spark of state.fx) {
       ctx.beginPath();
@@ -400,9 +444,10 @@
     state.packets = [];
     state.fx = [];
     state.carry = null;
-    state.spawnIn = 0.35;
+    state.spawnIn = 2.8;
     paintHud();
-    setStatus("Gateway online · pick up a request");
+    setStatus("Gateway online · click a request or move onto it");
+    spawnPacket(KINDS[0]);
   };
 
   const play = () => {
@@ -443,7 +488,13 @@
   };
 
   root.addEventListener("pointermove", trackPointer);
-  root.addEventListener("pointerdown", trackPointer);
+  root.addEventListener("pointerdown", (event) => {
+    trackPointer(event);
+    if (state.phase !== "play" || state.carry) return;
+    if (event.target instanceof Element && event.target.closest("button, a")) return;
+    const packet = nearestPacket(state.pointer.x, state.pointer.y, grabReach() + 24);
+    if (packet) grabPacket(packet);
+  });
 
   root.addEventListener("pointerleave", () => {
     state.pointer.on = false;
